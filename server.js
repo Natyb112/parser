@@ -1,3 +1,4 @@
+require('./config/config');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -8,36 +9,35 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
+//Consultar Datos
 //dar una peticion que responda a post
 app.get('/usuario', (req, res) => {
-    res.send('get Usuario');
+    res.json('get Usuario');
 });
-
-app.get('/usuario', (req, res) => {
-    //Consultar registro
-    res.send('Get Usuario');
-});
-
+//Crear nuevos registro
 app.post('/usuario', (req, res) => {
-    //Crear nuevos registro
-    res.send('Post Usuario');
+    res.json('Post Usuario');
 });
-
+//Actualizar registros
 app.put('/usuario/:id', (req, res) => {
-    //Actualizar registros
-    let body = req.body;
+        let body = req.body;
 
-    res.json({
-        body
-    });
+        if (body.nombre === undefined) {
+            res.status(400).json({
+                mensaje: "El nombre es necesario"
+            });
+        } else {
+            res.json({
+                persona: body
+            });
 
-});
-
+        }
+    })
+    //Eliminar registro(Cambiar a incactivo)
 app.delete('/usuario', (req, res) => {
-    //Eliminar registro
-    res.send('Delet Usuario');
+    res.json('Delet Usuario');
 });
 
 app.listen(3000, () => {
-    console.log('Escuchando en el puerto: ', 3000);
-});
+    console.log('Escuchando en el puerto: ', process.env.PORT);
+})
