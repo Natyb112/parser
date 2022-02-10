@@ -1,43 +1,28 @@
 require('./config/config');
+
 const express = require('express');
+const mongoose = require('mongoose');
+
 const app = express();
 const bodyParser = require('body-parser');
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
-//Consultar Datos
-//dar una peticion que responda a post
-app.get('/usuario', (req, res) => {
-    res.json('get Usuario');
-});
-//Crear nuevos registro
-app.post('/usuario', (req, res) => {
-    res.json('Post Usuario');
-});
-//Actualizar registros
-app.put('/usuario/:id', (req, res) => {
-        let body = req.body;
+//todos los endpoints
+app.use(require('./server/routes/usuario'));
 
-        if (body.nombre === undefined) {
-            res.status(400).json({
-                mensaje: "El nombre es necesario"
-            });
-        } else {
-            res.json({
-                persona: body
-            });
-
+/* Conexion con la BDD */
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true },
+    (err, res) => {
+        if (err) {
+            throw err;
         }
-    })
-    //Eliminar registro(Cambiar a incactivo)
-app.delete('/usuario', (req, res) => {
-    res.json('Delet Usuario');
-});
+        console.log("Base de datos ON LINEA! ");
 
-app.listen(3000, () => {
+    });
+
+app.listen(process.env.PORT, () => {
     console.log('Escuchando en el puerto: ', process.env.PORT);
-})
+});
